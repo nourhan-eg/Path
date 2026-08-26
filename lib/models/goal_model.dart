@@ -29,7 +29,7 @@ class GoalModel {
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       deadline: (map['deadline'] as Timestamp).toDate(),
       category: map['category'] as String,
-      overallProgress: map['overallProgress'] as double,
+      overallProgress: (map['overallProgress'] as num).toDouble(),
       timeCommitment: map['timeCommitment'] as String,
     );
   }

@@ -36,7 +36,7 @@ class MilestoneModel {
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       status: _statusFromString(map['status'] as String),
       order: map['order'] as int,
-      progress: map['progress'] as double,
+      progress: (map['progress'] as num).toDouble(),
     );
   }
 
