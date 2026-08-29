@@ -4,6 +4,7 @@ import 'package:path_app/core/theme/app_text_styles.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
     scaffoldBackgroundColor: LightColors.background,
     primaryColor: LightColors.primaryGreen,
     textTheme: TextTheme(
@@ -33,6 +34,7 @@ class AppTheme {
   );
 
   static ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
     scaffoldBackgroundColor: DarkColors.background,
     primaryColor: DarkColors.primaryGreen,
     textTheme: TextTheme(
