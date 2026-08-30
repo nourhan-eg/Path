@@ -7,9 +7,11 @@ class AppTheme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: LightColors.background,
     primaryColor: LightColors.primaryGreen,
+    secondaryHeaderColor: LightColors.textSecondary,
     textTheme: TextTheme(
       headlineLarge: AppTextStyles.heading1(Colors.black),
       bodyMedium: AppTextStyles.body(Colors.black),
+      titleLarge: AppTextStyles.heading2(LightColors.appBarTitle),
     ),
     cardTheme: CardThemeData(
       color: LightColors.card,
@@ -37,10 +39,13 @@ class AppTheme {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: DarkColors.background,
     primaryColor: DarkColors.primaryGreen,
+    secondaryHeaderColor: DarkColors.textSecondary,
     textTheme: TextTheme(
       headlineLarge: AppTextStyles.heading1(Colors.white),
       bodyMedium: AppTextStyles.body(Colors.white),
+      titleLarge: AppTextStyles.heading2(DarkColors.appBarTitle),
     ),
+
     cardTheme: CardThemeData(
       color: DarkColors.card,
       elevation: 0,

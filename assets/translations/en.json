@@ -4,5 +4,16 @@
     "description": "Move beyond checkboxes. Gather real evidence of growth and build lasting habits with AI-guided reflections.",
     "start_button": "Start Your Journey",
     "language": "English"
+  },
+  "dashboard": {
+    "title": "PATH",
+    "no_goals_title": "You haven't set a goal yet",
+    "no_goals_subtitle": "Set your first goal to start your journey\nand get a personalized plan.",
+    "set_your_goal": "Set Your Goal",
+    "nav_dashboard": "Dashboard",
+    "nav_goals": "Goals",
+    "nav_journey": "Journey",
+    "nav_resources": "Resources",
+    "nav_profile": "Profile"
   }
 }
