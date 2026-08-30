@@ -7,6 +7,11 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: color,
   );
+  static TextStyle heading2(Color color) => GoogleFonts.poppins(
+    fontSize: 28,
+    fontWeight: FontWeight.w600,
+    color: color,
+  );
   static TextStyle body(Color color) => GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.w400,
