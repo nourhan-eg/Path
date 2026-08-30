@@ -4,5 +4,16 @@
         "description": "بلاش نظام صح وغلط بس. سجّل خطوات حقيقية شفتها بعينك، وابني عادات تكمل معاك بمساعدة تحليل ذكي لمجهودك.",
         "start_button": "ابدأ رحلتك",
         "language": "العربية"
+    },
+    "dashboard": {
+        "title": "PATH",
+        "no_goals_title": "لم تقم بتحديد هدف بعد",
+        "no_goals_subtitle": "حدد هدفك الأول لتبدأ رحلتك\nوتحصل على خطة مخصصة.",
+        "set_your_goal": "حدد هدفك",
+        "nav_dashboard": "الرئيسية",
+        "nav_goals": "الأهداف",
+        "nav_journey": "الرحلة",
+        "nav_resources": "المصادر",
+        "nav_profile": "الملف الشخصي"
     }
 }

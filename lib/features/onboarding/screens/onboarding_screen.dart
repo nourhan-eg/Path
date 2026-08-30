@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:path_app/core/constants/app_images.dart';
 import 'package:path_app/core/router/app_router.dart';
 import 'package:path_app/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +28,8 @@ class OnboardingScreen extends StatelessWidget {
 
             Image.asset(
               isDark
-                  ? 'assets/images/onboarding_path_dark.png'
-                  : 'assets/images/onboarding_path_light.png',
+                  ? AppImages.onboardingPathDark
+                  : AppImages.onboardingPathLight,
             ),
             const SizedBox(height: 24),
             Padding(
@@ -104,7 +105,7 @@ class OnboardingScreen extends StatelessWidget {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRouter.dashboardRoute);
+                    Navigator.pushNamed(context, AppRouter.dashboardNoGoalRoute);
                   },
                   child: Text('onboarding.start_button'.tr()),
                 ),
