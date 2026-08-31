@@ -7,9 +7,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AppBar(
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
+        icon: Icon(Icons.arrow_back_rounded ,color: isDark?const Color(0xffC4C8BF):Color(0xff51634E),),
         onPressed: () {
           Navigator.pop(context);
         },

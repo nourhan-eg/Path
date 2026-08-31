@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:path_app/features/auth/screens/register_screen.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
-import 'package:path_app/features/goals/screens/goals_screen.dart';
+import 'package:path_app/features/goals/screens/build_with_ai_screen.dart';
+import 'package:path_app/features/goals/screens/set_goal_screen.dart';
 import 'package:path_app/features/onboarding/screens/onboarding_screen.dart';
 import 'package:path_app/features/signature_journey/screens/signature_journey.dart';
 
@@ -12,6 +13,7 @@ class AppRouter {
   static const String dashboardWishGoalRoute = '/dashboard_with';
   static const String signatureJourneyRoute = '/signature_journey';
   static const String goalsRoute = '/goals';
+  static const String goalsWithAiRoute = '/goals ai';
   static const String registerRoute = '/register';
   static const String dashboardNoGoalRoute = '/dashboard_no';
 
@@ -27,6 +29,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => GoalsScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case goalsWithAiRoute:
+        return MaterialPageRoute(builder: (_) =>BuildWithAiScreen());
       case dashboardNoGoalRoute:
         return MaterialPageRoute(builder: (_) => DashboardNoGoals());
       default:

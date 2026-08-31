@@ -10,6 +10,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
   final Color gold;
   final Color textPrimary;
   final Color textSecondary;
+  final Color textTertiary;
   final Color appBarTitle;
   final Color border;
   final Color card;
@@ -26,6 +27,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     required this.gold,
     required this.textPrimary,
     required this.textSecondary,
+    required this.textTertiary,
     required this.appBarTitle,
     required this.border,
     required this.card,
@@ -44,6 +46,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     Color? gold,
     Color? textPrimary,
     Color? textSecondary,
+    Color? textTertiary,
     Color? appBarTitle,
     Color? border,
     Color? card,
@@ -60,6 +63,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       gold: gold ?? this.gold,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
+      textTertiary: textTertiary ?? this.textTertiary,
       appBarTitle: appBarTitle ?? this.appBarTitle,
       border: border ?? this.border,
       card: card ?? this.card,
@@ -81,6 +85,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       gold: Color.lerp(gold, other.gold, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
+      textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
       appBarTitle: Color.lerp(appBarTitle, other.appBarTitle, t)!,
       border: Color.lerp(border, other.border, t)!,
       card: Color.lerp(card, other.card, t)!,
@@ -98,12 +103,13 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
 
   /// Light color scheme instance.
   static const light = AppColorScheme(
-    background: Color(0xFFF7F4ED),
+    background: Color(0xFFEDEAE0),
     primaryGreen: Color(0xFF8FA28A),
     sageLight: Color(0xFFC7D3C0),
     gold: Color(0xFFC8A96B),
     textPrimary: Color(0xFF2C2C2C),
     textSecondary: Color(0xFF444841),
+    textTertiary: Color(0xFF51634E),
     appBarTitle: Color(0xFF51634E),
     border: Color(0xFFE4E1D8),
     card: Color(0xFFFFFFFF),
@@ -122,6 +128,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     gold: Color(0xFFC8A96B),
     textPrimary: Color(0xFFF2F0E8),
     textSecondary: Color(0xFFC4C8BF),
+    textTertiary: Color(0xFFE3E3DE),
     appBarTitle: Color(0xFFB8CCB2),
     border: Color(0xFF3A3C35),
     card: Color(0xFF2A2C26),
