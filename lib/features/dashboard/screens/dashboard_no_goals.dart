@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:path_app/core/constants/app_images.dart';
 import 'package:path_app/core/router/app_router.dart';
 import 'package:path_app/core/widgets/custom_app_bar.dart';
-import 'package:path_app/core/widgets/custom_bottom_nav_bar.dart';
 
 class DashboardNoGoals extends StatefulWidget {
   static const String routeName = AppRouter.dashboardNoGoalRoute;
@@ -15,8 +14,6 @@ class DashboardNoGoals extends StatefulWidget {
 }
 
 class _DashboardNoGoalsState extends State<DashboardNoGoals> {
-  int _selectedNavIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -69,7 +66,7 @@ class _DashboardNoGoalsState extends State<DashboardNoGoals> {
                     shape: const StadiumBorder(),
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRouter.goalsRoute);
+                    Navigator.pushNamed(context, AppRouter.goalsSetRoute);
                   },
                   child: Text(
                     'dashboard.set_your_goal'.tr(),
@@ -86,19 +83,6 @@ class _DashboardNoGoalsState extends State<DashboardNoGoals> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _selectedNavIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedNavIndex = index;
-          });
-          if (index == 1) {
-            Navigator.pushNamed(context, AppRouter.goalsRoute);
-          } else if (index == 2) {
-            Navigator.pushNamed(context, AppRouter.signatureJourneyRoute);
-          }
-        },
       ),
     );
   }
