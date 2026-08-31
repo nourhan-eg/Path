@@ -5,6 +5,7 @@ import 'package:path_app/core/theme/app_color.dart';
 import 'package:path_app/core/utils/validators.dart';
 import 'package:path_app/features/auth/widgets/auth_text_field.dart';
 import 'package:path_app/providers/auth_provider.dart';
+import 'package:path_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -58,7 +59,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (success) {
-      Navigator.pushReplacementNamed(context, AppRouter.dashboardNoGoalRoute);
+      if (!mounted) return;
+      if (authProvider.currentUser != null) {
+        await context.read<UserProvider>().loadUser(authProvider.currentUser!.uid);
+      }
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, AppRouter.mainRoute);
     } else if (authProvider.errorMessage != null) {
       _showErrorSnackBar(authProvider.errorMessage!);
     }

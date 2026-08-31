@@ -75,7 +75,7 @@ class OnboardingScreen extends StatelessWidget {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRouter.registerRoute);
+                      Navigator.pushNamed(context, AppRouter.dashboardNoGoalRoute);
                     },
                     child: Text('onboarding.start_button'.tr()),
                   ),
