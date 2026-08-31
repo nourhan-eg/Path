@@ -31,6 +31,7 @@ class AppTheme {
       textTheme: TextTheme(
         headlineLarge: AppTextStyles.heading1(colors.textPrimary),
         headlineSmall: AppTextStyles.fieldLabel(colors.textPrimary),
+        headlineMedium: AppTextStyles.heading1(colors.textTertiary),
         titleLarge: AppTextStyles.heading2(colors.appBarTitle),
         titleMedium: AppTextStyles.subtitle(colors.textSecondary),
         bodyMedium: AppTextStyles.body(colors.textPrimary),
