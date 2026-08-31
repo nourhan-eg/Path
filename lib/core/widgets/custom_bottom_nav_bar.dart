@@ -14,12 +14,12 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = Theme.of(context).extension<AppColorScheme>()!;
 
-    final activePillColor = isDark ? DarkColors.appBarTitle : LightColors.primaryGreen;
-    final activeIconColor = isDark ? const Color(0xFF1B1D19) : Colors.white;
-    final inactiveColor = isDark ? DarkColors.textSecondary : LightColors.textSecondary;
-    final activeTextColor = isDark ? DarkColors.textPrimary : LightColors.textPrimary;
+    final activePillColor = colors.appBarTitle;
+    final activeIconColor = colors.background;
+    final inactiveColor = colors.textSecondary;
+    final activeTextColor = colors.textPrimary;
 
     final items = [
       _NavItem(
@@ -47,10 +47,10 @@ class CustomBottomNavBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? DarkColors.background : LightColors.background,
+        color: colors.background,
         border: Border(
           top: BorderSide(
-            color: isDark ? DarkColors.border.withValues(alpha: 0.3) : LightColors.border.withValues(alpha: 0.5),
+            color: colors.border.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -71,7 +71,10 @@ class CustomBottomNavBar extends StatelessWidget {
                 children: [
                   isSelected
                       ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: activePillColor,
                             borderRadius: BorderRadius.circular(20),
@@ -95,7 +98,9 @@ class CustomBottomNavBar extends StatelessWidget {
                     item.label,
                     style: TextStyle(
                       fontSize: 11,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: isSelected ? activeTextColor : inactiveColor,
                     ),
                   ),
