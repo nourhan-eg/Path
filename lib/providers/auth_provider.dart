@@ -33,7 +33,8 @@ class AuthProvider extends ChangeNotifier {
   /// Stream of auth state changes for reactive listeners.
   Stream<User?> get authStateChanges => _authService.authStateChanges;
 
-  /// Registers a new user, sets display name, and creates a Firestore profile.
+  /// Registers a new user, sets display name, creates a Firestore profile,
+  /// and sends an email verification link before allowing access.
   Future<bool> register({
     required String email,
     required String password,
@@ -50,8 +51,10 @@ class AuthProvider extends ChangeNotifier {
         name: name,
       );
 
-      // Create a Firestore user document.
       if (credential.user != null) {
+        await _authService.sendEmailVerification();
+        await _authService.signOut();
+
         final userModel = UserModel(
           uid: credential.user!.uid,
           email: email,
@@ -63,6 +66,7 @@ class AuthProvider extends ChangeNotifier {
       }
 
       _status = AuthStatus.success;
+      _errorMessage = 'Verification email sent. Please verify your email before log in.';
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {

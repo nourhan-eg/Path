@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_app/features/auth/screens/login_screen.dart';
 import 'package:path_app/features/auth/screens/register_screen.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
 import 'package:path_app/features/goals/screens/goals_screen.dart';
@@ -13,6 +14,7 @@ class AppRouter {
   static const String signatureJourneyRoute = '/signature_journey';
   static const String goalsRoute = '/goals';
   static const String registerRoute = '/register';
+  static const String loginRoute = '/login';
   static const String dashboardNoGoalRoute = '/dashboard_no';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -27,6 +29,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => GoalsScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case loginRoute:
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       case dashboardNoGoalRoute:
         return MaterialPageRoute(builder: (_) => DashboardNoGoals());
       default:
