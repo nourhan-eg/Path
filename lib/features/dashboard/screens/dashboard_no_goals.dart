@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:path_app/core/constants/app_images.dart';
 import 'package:path_app/core/router/app_router.dart';
-import 'package:path_app/core/theme/app_color.dart';
 import 'package:path_app/core/widgets/custom_app_bar.dart';
 import 'package:path_app/core/widgets/custom_bottom_nav_bar.dart';
 
@@ -20,7 +19,6 @@ class _DashboardNoGoalsState extends State<DashboardNoGoals> {
 
   @override
   Widget build(BuildContext context) {
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryGreen = Theme.of(context).primaryColor;
     final secondaryGreen = Theme.of(context).secondaryHeaderColor;
@@ -53,9 +51,9 @@ class _DashboardNoGoalsState extends State<DashboardNoGoals> {
               Text(
                 'dashboard.no_goals_subtitle'.tr(),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: secondaryGreen
-                )
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: secondaryGreen),
               ),
 
               const SizedBox(height: 40),
@@ -75,12 +73,11 @@ class _DashboardNoGoalsState extends State<DashboardNoGoals> {
                   },
                   child: Text(
                     'dashboard.set_your_goal'.tr(),
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontSize: 18,
-                        fontWeight:  .w400,
-                        color: isDark? Color(0xff243422):Color(0xffFFFFFF)
-
-                      )
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontSize: 18,
+                      fontWeight: .w400,
+                      color: isDark ? Color(0xff243422) : Color(0xffFFFFFF),
+                    ),
                   ),
                 ),
               ),

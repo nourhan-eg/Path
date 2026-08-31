@@ -1,0 +1,39 @@
+import 'package:flutter/material.dart';
+import 'package:path_app/models/user_model.dart';
+import 'package:path_app/services/firebase/firestore_service.dart';
+
+/// Manages the current user's profile data loaded from Firestore.
+class UserProvider extends ChangeNotifier {
+  final FirestoreService _firestoreService;
+
+  UserProvider({required FirestoreService firestoreService})
+      : _firestoreService = firestoreService;
+
+  UserModel? _user;
+  bool _isLoading = false;
+
+  UserModel? get user => _user;
+  bool get isLoading => _isLoading;
+  bool get hasUser => _user != null;
+
+  /// Loads the user profile from Firestore by [uid].
+  Future<void> loadUser(String uid) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _user = await _firestoreService.getUserDocument(uid);
+    } catch (_) {
+      _user = null;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Clears the cached user (e.g. on sign-out).
+  void clearUser() {
+    _user = null;
+    notifyListeners();
+  }
+}
