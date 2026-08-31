@@ -10,6 +10,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
   final Color gold;
   final Color textPrimary;
   final Color textSecondary;
+  final Color appBarTitle;
   final Color border;
   final Color card;
   final Color inputFill;
@@ -25,6 +26,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     required this.gold,
     required this.textPrimary,
     required this.textSecondary,
+    required this.appBarTitle,
     required this.border,
     required this.card,
     required this.inputFill,
@@ -42,6 +44,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     Color? gold,
     Color? textPrimary,
     Color? textSecondary,
+    Color? appBarTitle,
     Color? border,
     Color? card,
     Color? inputFill,
@@ -57,6 +60,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       gold: gold ?? this.gold,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
+      appBarTitle: appBarTitle ?? this.appBarTitle,
       border: border ?? this.border,
       card: card ?? this.card,
       inputFill: inputFill ?? this.inputFill,
@@ -77,11 +81,15 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       gold: Color.lerp(gold, other.gold, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
+      appBarTitle: Color.lerp(appBarTitle, other.appBarTitle, t)!,
       border: Color.lerp(border, other.border, t)!,
       card: Color.lerp(card, other.card, t)!,
       inputFill: Color.lerp(inputFill, other.inputFill, t)!,
-      appBarBackground:
-          Color.lerp(appBarBackground, other.appBarBackground, t)!,
+      appBarBackground: Color.lerp(
+        appBarBackground,
+        other.appBarBackground,
+        t,
+      )!,
       error: Color.lerp(error, other.error, t)!,
       success: Color.lerp(success, other.success, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
@@ -95,7 +103,8 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     sageLight: Color(0xFFC7D3C0),
     gold: Color(0xFFC8A96B),
     textPrimary: Color(0xFF2C2C2C),
-    textSecondary: Color(0xFF6E6E6E),
+    textSecondary: Color(0xFF444841),
+    appBarTitle: Color(0xFF51634E),
     border: Color(0xFFE4E1D8),
     card: Color(0xFFFFFFFF),
     inputFill: Color(0xFFEFEDE5),
@@ -112,7 +121,8 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     sageLight: Color(0xFF3A3C35),
     gold: Color(0xFFC8A96B),
     textPrimary: Color(0xFFF2F0E8),
-    textSecondary: Color(0xFFA8A79E),
+    textSecondary: Color(0xFFC4C8BF),
+    appBarTitle: Color(0xFFB8CCB2),
     border: Color(0xFF3A3C35),
     card: Color(0xFF2A2C26),
     inputFill: Color(0xFF1F211C),

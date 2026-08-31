@@ -9,6 +9,12 @@ class AppTextStyles {
   );
 
   static TextStyle heading2(Color color) => GoogleFonts.poppins(
+    fontSize: 28,
+    fontWeight: FontWeight.w600,
+    color: color,
+  );
+
+  static TextStyle heading3(Color color) => GoogleFonts.poppins(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: color,

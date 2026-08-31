@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:path_app/core/constants/app_images.dart';
 import 'package:path_app/core/router/app_router.dart';
 import 'package:path_app/core/theme/app_color.dart';
 import 'package:path_app/providers/theme_provider.dart';
@@ -35,8 +36,8 @@ class OnboardingScreen extends StatelessWidget {
               Flexible(
                 child: Image.asset(
                   isDark
-                      ? 'assets/images/onboarding_path_dark.png'
-                      : 'assets/images/onboarding_path_light.png',
+                      ? AppImages.onboardingPathDark
+                      : AppImages.onboardingPathLight,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -109,9 +110,9 @@ class OnboardingScreen extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               tr('onboarding.language'),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.textSecondary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: colors.textSecondary),
             ),
           ],
         ),
@@ -133,7 +134,6 @@ class OnboardingScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Light mode button
           _buildThemeOption(
             context: context,
             colors: colors,
@@ -144,7 +144,6 @@ class OnboardingScreen extends StatelessWidget {
               left: Radius.circular(7),
             ),
           ),
-          // Dark mode button
           _buildThemeOption(
             context: context,
             colors: colors,

@@ -24,12 +24,14 @@ class AppTheme {
       brightness: brightness,
       scaffoldBackgroundColor: colors.background,
       primaryColor: colors.primaryGreen,
+      secondaryHeaderColor: colors.textSecondary,
       extensions: <ThemeExtension>[colors],
 
       // ── Typography ──
       textTheme: TextTheme(
         headlineLarge: AppTextStyles.heading1(colors.textPrimary),
         headlineSmall: AppTextStyles.fieldLabel(colors.textPrimary),
+        titleLarge: AppTextStyles.heading2(colors.appBarTitle),
         titleMedium: AppTextStyles.subtitle(colors.textSecondary),
         bodyMedium: AppTextStyles.body(colors.textPrimary),
         bodySmall: AppTextStyles.caption(colors.textSecondary),
@@ -65,9 +67,9 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: colors.primaryGreen,
-          textStyle: AppTextStyles.body(colors.primaryGreen).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: AppTextStyles.body(
+            colors.primaryGreen,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
       ),
 
@@ -83,8 +85,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: colors.inputFill,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 12,
+        ),
         border: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,

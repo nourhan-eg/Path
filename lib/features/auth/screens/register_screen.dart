@@ -58,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (success) {
-      Navigator.pushReplacementNamed(context, AppRouter.dashboardRoute);
+      Navigator.pushReplacementNamed(context, AppRouter.dashboardNoGoalRoute);
     } else if (authProvider.errorMessage != null) {
       _showErrorSnackBar(authProvider.errorMessage!);
     }
@@ -77,9 +77,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Expanded(
                 child: Text(
                   message,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colors.textPrimary,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: colors.textPrimary),
                 ),
               ),
             ],
