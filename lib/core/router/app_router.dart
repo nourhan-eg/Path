@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_app/features/auth/screens/register_screen.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_screen.dart';
 import 'package:path_app/features/goals/screens/goals_screen.dart';
 import 'package:path_app/features/onboarding/screens/onboarding_screen.dart';
@@ -9,6 +10,7 @@ class AppRouter {
   static const String dashboardRoute = '/dashboard';
   static const String signatureJourneyRoute = '/signature_journey';
   static const String goalsRoute = '/goals';
+  static const String registerRoute = '/register';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -20,6 +22,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => SignatureJourney());
       case goalsRoute:
         return MaterialPageRoute(builder: (_) => GoalsScreen());
+      case registerRoute:
+        return MaterialPageRoute(builder: (_) => RegisterScreen());
       default:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
     }
