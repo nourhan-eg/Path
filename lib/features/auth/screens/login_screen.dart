@@ -8,6 +8,7 @@ import 'package:path_app/features/auth/widgets/auth_text_field.dart';
 import 'package:path_app/providers/auth_provider.dart' as app_auth;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_app/providers/user_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = AppRouter.loginRoute;
@@ -118,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   // ── Login flow ──
-
   Future<void> _handleLogin() async {
     // 1. Validate form fields (client-side).
     if (!_formKey.currentState!.validate()) return;
@@ -137,9 +137,16 @@ class _LoginScreenState extends State<LoginScreen>
 
     // 4. Handle result.
     if (success) {
+      // Load the user's profile data for use across the app (e.g. Profile screen).
+      if (authProvider.currentUser != null) {
+        await context.read<UserProvider>().loadUser(
+          authProvider.currentUser!.uid,
+        );
+        if (!mounted) return;
+      }
+
       await _persistRememberMeState();
       if (!mounted) return;
-      // Navigate and prevent back-button to login.
       Navigator.pushReplacementNamed(context, AppRouter.dashboardNoGoalRoute);
     } else if (authProvider.errorMessage != null) {
       _showErrorSnackBar(authProvider.errorMessage!);

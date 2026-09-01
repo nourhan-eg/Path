@@ -24,26 +24,25 @@ class AppRouter {
       case mainRoute:
         return MaterialPageRoute(builder: (_) => const MainScreen());
       case dashboardNoGoalRoute:
-        return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+        return MaterialPageRoute(
+          builder: (_) => const MainScreen(initialIndex: 0),
+        );
       case goalsSetRoute:
         return MaterialPageRoute(builder: (_) => const SetGoalsScreen());
       case signatureJourneyRoute:
-        return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 2));
+        return MaterialPageRoute(
+          builder: (_) => const MainScreen(initialIndex: 2),
+        );
       case onboardingRoute:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
       case dashboardWishGoalRoute:
         return MaterialPageRoute(builder: (_) => DashboardScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
-<<<<<<< HEAD
       case loginRoute:
         return MaterialPageRoute(builder: (_) => LoginScreen());
-      case dashboardNoGoalRoute:
-        return MaterialPageRoute(builder: (_) => DashboardNoGoals());
-=======
       case goalsWithAiRoute:
         return MaterialPageRoute(builder: (_) => BuildWithAiScreen());
->>>>>>> origin/develop
       default:
         return MaterialPageRoute(builder: (_) => const MainScreen());
     }
