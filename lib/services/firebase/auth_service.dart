@@ -83,6 +83,10 @@ class AuthService {
     await firebaseAuth.signOut();
   }
 
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
   /// Maps [FirebaseAuthException] error codes to user-friendly messages.
   static String mapFirebaseAuthError(FirebaseAuthException e) {
     switch (e.code) {

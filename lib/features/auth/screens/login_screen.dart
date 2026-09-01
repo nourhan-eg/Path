@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:path_app/core/constants/app_images.dart';
@@ -7,7 +6,6 @@ import 'package:path_app/core/theme/app_color.dart';
 import 'package:path_app/core/utils/validators.dart';
 import 'package:path_app/features/auth/widgets/auth_text_field.dart';
 import 'package:path_app/providers/auth_provider.dart' as app_auth;
-import 'package:path_app/services/firebase/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -140,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen>
     // 4. Handle result.
     if (success) {
       await _persistRememberMeState();
+      if (!mounted) return;
       // Navigate and prevent back-button to login.
       Navigator.pushReplacementNamed(context, AppRouter.dashboardNoGoalRoute);
     } else if (authProvider.errorMessage != null) {
@@ -181,41 +180,6 @@ class _LoginScreenState extends State<LoginScreen>
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
           ),
-        ),
-      );
-  }
-
-  void _showSuccessSnackBar(String message) {
-    final colors = Theme.of(context).extension<AppColorScheme>()!;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(
-                Icons.check_circle_outline,
-                color: colors.primaryGreen,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  message,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: colors.textPrimary),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: colors.card,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: colors.primaryGreen.withValues(alpha: 0.2)),
-          ),
-          duration: const Duration(seconds: 4),
         ),
       );
   }
@@ -443,27 +407,31 @@ class _LoginScreenState extends State<LoginScreen>
                       if (!resetFormKey.currentState!.validate()) return;
 
                       final email = resetEmailController.text.trim();
+                      final authProvider = context
+                          .read<app_auth.AuthProvider>();
 
-                      try {
-                        await FirebaseAuth.instance.sendPasswordResetEmail(
-                          email: email,
-                        );
-                        if (!context.mounted) return;
-                        Navigator.pop(ctx);
-                        _showSuccessSnackBar(
-                          'A password reset link was sent to $email.',
-                        );
-                      } on FirebaseAuthException catch (e) {
-                        if (!context.mounted) return;
-                        Navigator.pop(ctx);
-                        _showErrorSnackBar(AuthService.mapFirebaseAuthError(e));
-                      } catch (_) {
-                        if (!context.mounted) return;
-                        Navigator.pop(ctx);
-                        _showErrorSnackBar(
-                          'Something went wrong while sending the reset link.',
-                        );
-                      }
+                      // Capture everything we need from context BEFORE the await.
+                      final messenger = ScaffoldMessenger.of(context);
+                      final rootNavigator = Navigator.of(ctx);
+
+                      final success = await authProvider.resetPassword(
+                        email: email,
+                      );
+
+                      // No context usage after this point — everything is pre-captured.
+                      rootNavigator.pop();
+
+                      messenger.hideCurrentSnackBar();
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success
+                                ? 'A password reset link was sent to $email.'
+                                : (authProvider.errorMessage ??
+                                      'Something went wrong while sending the reset link.'),
+                          ),
+                        ),
+                      );
                     },
                     child: const Text('Send Reset Link'),
                   ),
