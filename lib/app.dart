@@ -20,7 +20,7 @@ class PathApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
-      initialRoute: AppRouter.onboardingRoute,
+      initialRoute: AppRouter.mainRoute,
       onGenerateRoute: AppRouter.generateRoute,
     );
   }

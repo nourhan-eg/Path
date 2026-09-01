@@ -68,7 +68,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (success) {
       _showErrorSnackBar(
-        authProvider.errorMessage ?? 'Verification email sent. Please verify before logging in.',
+        authProvider.errorMessage ??
+            'Verification email sent. Please verify before logging in.',
       );
       Navigator.pushReplacementNamed(context, AppRouter.loginRoute);
     } else if (authProvider.errorMessage != null) {
@@ -317,10 +318,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    AppRouter.loginRoute,
-                  );
+                  Navigator.pushReplacementNamed(context, AppRouter.loginRoute);
                 },
             ),
           ],
