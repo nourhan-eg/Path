@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../providers/auth_provider.dart';
@@ -55,7 +56,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } on PlatformException catch (e) {
       if (mounted) {
-        final message = e.code == 'channel-error' || e.message?.contains('channel-error') == true
+        final message =
+            e.code == 'channel-error' ||
+                e.message?.contains('channel-error') == true
             ? 'Plugin channel added. Please STOP and RESTART the Flutter app completely.'
             : 'Could not select image: ${e.message}';
         ScaffoldMessenger.of(context).showSnackBar(
@@ -67,9 +70,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not select image: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not select image: $e')));
       }
     }
   }
@@ -86,20 +89,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext ctx) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 8.0,
+            ),
             child: Wrap(
               children: [
                 ListTile(
-                  leading: Icon(Icons.photo_library_outlined, color: colors.primaryGreen),
-                  title: Text('Choose from Gallery', style: TextStyle(color: colors.textPrimary)),
+                  leading: Icon(
+                    Icons.photo_library_outlined,
+                    color: colors.primaryGreen,
+                  ),
+                  title: Text(
+                    'Choose from Gallery',
+                    style: TextStyle(color: colors.textPrimary),
+                  ),
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickImage(ImageSource.gallery);
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.camera_alt_outlined, color: colors.primaryGreen),
-                  title: Text('Take a Photo', style: TextStyle(color: colors.textPrimary)),
+                  leading: Icon(
+                    Icons.camera_alt_outlined,
+                    color: colors.primaryGreen,
+                  ),
+                  title: Text(
+                    'Take a Photo',
+                    style: TextStyle(color: colors.textPrimary),
+                  ),
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickImage(ImageSource.camera);
@@ -108,7 +126,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (_profileImage != null)
                   ListTile(
                     leading: Icon(Icons.delete_outline, color: colors.error),
-                    title: Text('Remove Photo', style: TextStyle(color: colors.error)),
+                    title: Text(
+                      'Remove Photo',
+                      style: TextStyle(color: colors.error),
+                    ),
                     onTap: () {
                       Navigator.pop(ctx);
                       setState(() {
@@ -156,9 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 28),
 
-              ProfileMedalsSection(
-                onViewAllTap: () {},
-              ),
+              ProfileMedalsSection(onViewAllTap: () {}),
 
               const SizedBox(height: 28),
 
@@ -190,9 +209,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 onSignOutTap: () async {
                   await authProvider.logout();
+                  if (!mounted) return;
+
+                  context.read<UserProvider>().clearUser();
+
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRouter.loginRoute,
+                    (route) => false,
+                  );
                 },
-                languageText: context.locale.languageCode == 'ar' ? 'العربية' : 'English',
-                themeText: themeProvider.themeMode == ThemeMode.dark ? 'Dark' : 'Light',
+                languageText: context.locale.languageCode == 'ar'
+                    ? 'العربية'
+                    : 'English',
+                themeText: themeProvider.themeMode == ThemeMode.dark
+                    ? 'Dark'
+                    : 'Light',
               ),
 
               const SizedBox(height: 20),
