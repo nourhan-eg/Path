@@ -1,81 +1,58 @@
 import 'package:flutter/material.dart';
-import '../models/goal_model.dart';
+import 'package:path_app/models/goal_model.dart';
 
-
+/// Holds draft data for the goal setup flow across steps.
 class GoalProvider extends ChangeNotifier {
-
-  String? _selectedGoalType;
-  String _goalDescription = '';
-  String? _selectedTimeCommitment;
-  DateTime? _targetDate;
+  GoalModel? _goal;
   int _currentStep = 1;
 
-  List<GoalModel> _goals = [];
-  bool _isLoading = false;
-
-  String? get selectedGoalType => _selectedGoalType;
-  String get goalDescription => _goalDescription;
-  String? get selectedTimeCommitment => _selectedTimeCommitment;
-  DateTime? get targetDate => _targetDate;
+  GoalModel? get goal => _goal;
   int get currentStep => _currentStep;
 
-  List<GoalModel> get goals => _goals;
-  bool get isLoading => _isLoading;
+  // Convenience getters for draft goal fields
+  String? get goalType => _goal?.category.isNotEmpty == true ? _goal!.category : null;
+  String get goalTitle => _goal?.title ?? '';
+  String get goalDescription => _goal?.description ?? '';
+  String? get timeCommitment => _goal?.timeCommitment.isNotEmpty == true ? _goal!.timeCommitment : null;
+  DateTime? get targetDate => _goal?.deadline;
 
-
-  int get completedFieldsCount {
-    int count = 0;
-    if (_selectedGoalType != null && _selectedGoalType!.isNotEmpty) count++;
-    if (_goalDescription.trim().isNotEmpty) count++;
-    if (_selectedTimeCommitment != null && _selectedTimeCommitment!.isNotEmpty) count++;
-    if (_targetDate != null) count++;
-    return count;
+  void updateGoal(GoalModel goal) {
+    _goal = goal;
+    notifyListeners();
   }
 
-  void updateDraftStep1({
+  void updateStep1({
     required String? goalType,
+    required String goalTitle,
     required String goalDescription,
     required String? timeCommitment,
     required DateTime? targetDate,
   }) {
-    _selectedGoalType = goalType;
-    _goalDescription = goalDescription;
-    _selectedTimeCommitment = timeCommitment;
-    _targetDate = targetDate;
+    final now = DateTime.now();
+    _goal = GoalModel(
+      goalId: _goal?.goalId ?? '',
+      userId: _goal?.userId ?? '',
+      title: goalTitle,
+      createdAt: _goal?.createdAt ?? now,
+      deadline: targetDate ?? now,
+      category: goalType ?? '',
+      description: goalDescription,
+      overallProgress: _goal?.overallProgress ?? 0.0,
+      timeCommitment: timeCommitment ?? '',
+    );
     notifyListeners();
   }
 
-  void setGoalType(String? type) {
-    _selectedGoalType = type;
-    notifyListeners();
-  }
-
-  void setGoalDescription(String description) {
-    _goalDescription = description;
-    notifyListeners();
-  }
-
-  void setTimeCommitment(String? commitment) {
-    _selectedTimeCommitment = commitment;
-    notifyListeners();
-  }
-
-  void setTargetDate(DateTime? date) {
-    _targetDate = date;
-    notifyListeners();
-  }
-
-  void setCurrentStep(int step) {
+  void setStep(int step) {
     _currentStep = step;
     notifyListeners();
   }
 
-  void resetDraft() {
-    _selectedGoalType = null;
-    _goalDescription = '';
-    _selectedTimeCommitment = null;
-    _targetDate = null;
+  void reset() {
+    _goal = null;
     _currentStep = 1;
     notifyListeners();
   }
+
+  void resetDraft() => reset();
 }
