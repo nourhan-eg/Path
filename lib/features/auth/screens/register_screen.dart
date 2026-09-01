@@ -4,12 +4,11 @@ import 'package:path_app/core/router/app_router.dart';
 import 'package:path_app/core/theme/app_color.dart';
 import 'package:path_app/core/utils/validators.dart';
 import 'package:path_app/features/auth/widgets/auth_text_field.dart';
-import 'package:path_app/providers/auth_provider.dart';
-import 'package:path_app/providers/user_provider.dart';
+import 'package:path_app/providers/auth_provider.dart' as app_auth;
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  static const String routeName = 'register';
+  static const String routeName = AppRouter.registerRoute;
   const RegisterScreen({super.key});
 
   @override
@@ -23,6 +22,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _agreedToTerms = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Clear any stale auth errors when entering the screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<app_auth.AuthProvider>().clearError();
+    });
+  }
 
   @override
   void dispose() {
@@ -46,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // 3. Clear any previous error.
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.read<app_auth.AuthProvider>();
     authProvider.clearError();
 
     // 4. Call register.
@@ -59,12 +67,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (success) {
-      if (!mounted) return;
-      if (authProvider.currentUser != null) {
-        await context.read<UserProvider>().loadUser(authProvider.currentUser!.uid);
-      }
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRouter.mainRoute);
+      _showErrorSnackBar(
+        authProvider.errorMessage ??
+            'Verification email sent. Please verify before logging in.',
+      );
+      Navigator.pushReplacementNamed(context, AppRouter.loginRoute);
     } else if (authProvider.errorMessage != null) {
       _showErrorSnackBar(authProvider.errorMessage!);
     }
@@ -97,6 +104,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             side: BorderSide(color: colors.error.withValues(alpha: 0.3)),
           ),
           duration: const Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'Dismiss',
+            textColor: colors.error,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
         ),
       );
   }
@@ -106,13 +120,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.extension<AppColorScheme>()!;
+    final colors = theme.extension<AppColorScheme>() ?? AppColorScheme.light;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('PATH', style: theme.textTheme.bodyMedium),
         centerTitle: true,
-        leading: const SizedBox.shrink(),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -250,9 +267,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildSubmitButton() {
-    return Consumer<AuthProvider>(
+    return Consumer<app_auth.AuthProvider>(
       builder: (context, authProvider, child) {
-        final isLoading = authProvider.status == AuthStatus.loading;
+        final isLoading = authProvider.status == app_auth.AuthStatus.loading;
         return SizedBox(
           width: double.infinity,
           height: 56,
@@ -301,8 +318,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  // Navigate back to onboarding for now (no login screen yet).
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, AppRouter.loginRoute);
                 },
             ),
           ],

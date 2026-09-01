@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_app/features/auth/screens/login_screen.dart';
 import 'package:path_app/features/auth/screens/register_screen.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
 import 'package:path_app/features/goals/screens/build_with_ai_screen.dart';
@@ -15,6 +16,7 @@ class AppRouter {
   static const String goalsRoute = '/goals';
   static const String goalsWithAiRoute = '/goals ai';
   static const String registerRoute = '/register';
+  static const String loginRoute = '/login';
   static const String dashboardNoGoalRoute = '/dashboard_no';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -22,17 +24,23 @@ class AppRouter {
       case mainRoute:
         return MaterialPageRoute(builder: (_) => const MainScreen());
       case dashboardNoGoalRoute:
-        return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 0));
+        return MaterialPageRoute(
+          builder: (_) => const MainScreen(initialIndex: 0),
+        );
       case goalsSetRoute:
         return MaterialPageRoute(builder: (_) => const SetGoalsScreen());
       case signatureJourneyRoute:
-        return MaterialPageRoute(builder: (_) => const MainScreen(initialIndex: 2));
+        return MaterialPageRoute(
+          builder: (_) => const MainScreen(initialIndex: 2),
+        );
       case onboardingRoute:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
       case dashboardWishGoalRoute:
         return MaterialPageRoute(builder: (_) => DashboardScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
+      case loginRoute:
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       case goalsWithAiRoute:
         return MaterialPageRoute(builder: (_) => BuildWithAiScreen());
       default:
