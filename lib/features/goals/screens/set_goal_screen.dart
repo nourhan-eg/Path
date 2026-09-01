@@ -5,9 +5,9 @@ import 'package:provider/provider.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../core/widgets/custom_app_bar.dart';
-import '../../../providers/goal_draft_provider.dart';
+import '../../../providers/goal_provider.dart';
 import '../widgets/goal_date_field.dart';
-import '../widgets/goal_type_selector.dart';
+import '../widgets/goal_category_selector.dart';
 import '../widgets/step_indicator.dart';
 import '../widgets/time_commitment_grid.dart';
 
@@ -22,6 +22,7 @@ class SetGoalsScreen extends StatefulWidget {
 
 class _GoalsScreenState extends State<SetGoalsScreen> {
   final TextEditingController _goalTitleController = TextEditingController();
+  final TextEditingController _goalCategoryController = TextEditingController();
   final TextEditingController _goalDescriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
@@ -42,10 +43,11 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
   @override
   void initState() {
     super.initState();
+    _goalTitleController.addListener(_onTextChanged);
     _goalDescriptionController.addListener(_onTextChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final draft = context.read<GoalDraftProvider>();
+      final draft = context.read<GoalProvider>();
       if (draft.goalType != null) {
         setState(() {
           selectedGoalType = draft.goalType;
@@ -75,6 +77,7 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
 
   @override
   void dispose() {
+    _goalTitleController.removeListener(_onTextChanged);
     _goalDescriptionController.removeListener(_onTextChanged);
     _goalTitleController.dispose();
     _goalDescriptionController.dispose();
@@ -98,6 +101,7 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
 
   int get completedFieldsCount {
     int count = 0;
+    if (_goalTitleController.text.trim().isNotEmpty) count++;
     if (selectedGoalType != null && selectedGoalType!.isNotEmpty) count++;
     if (_goalDescriptionController.text.trim().isNotEmpty) count++;
     if (selectedTimeCommitment != null && selectedTimeCommitment!.isNotEmpty) count++;
@@ -105,9 +109,9 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
     return count;
   }
 
-  int get currentStep => completedFieldsCount.clamp(0, 4);
+  int get currentStep => completedFieldsCount.clamp(0, 5);
 
-  bool get _isFormValid => completedFieldsCount == 4;
+  bool get _isFormValid => completedFieldsCount == 5;
 
   Future<void> _handleDatePicker() async {
     final now = DateTime.now();
@@ -135,8 +139,9 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
     });
 
     try {
-      context.read<GoalDraftProvider>().updateStep1(
+      context.read<GoalProvider>().updateStep1(
         goalType: selectedGoalType,
+        goalTitle: _goalTitleController.text.trim(),
         goalDescription: _goalDescriptionController.text.trim(),
         timeCommitment: selectedTimeCommitment,
         targetDate: _selectedDate,
@@ -145,7 +150,8 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
       await Future.delayed(const Duration(milliseconds: 200));
 
       if (!mounted) return;
-      Navigator.pushNamed(context, AppRouter.goalsWithAiRoute);
+      final goal = context.read<GoalProvider>().goal;
+      Navigator.pushNamed(context, AppRouter.goalsWithAiRoute ,arguments: goal);
     } finally {
       if (mounted) {
         setState(() {
@@ -173,7 +179,7 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                 Row(
                   children: [
                     Text(
-                      'STEP $currentStep OF 4',
+                      'STEP $currentStep OF 5',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(width: 12),
@@ -201,16 +207,44 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 18),
                 ),
                 const SizedBox(height: 16),
-                GoalTypeSelector(
+               GoalCategorySelector(
                   selectedType: selectedGoalType,
                   onTypeSelected: (type) {
                     setState(() {
-                      selectedGoalType = type;
-                      _goalTitleController.text = type;
+                       selectedGoalType = type;
+                      _goalCategoryController.text = type;
                     });
                   },
                 ),
                 const SizedBox(height: 32),
+                Text(
+                  "Goal Title",
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 18),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  maxLines: 1,
+                  controller: _goalTitleController,
+                  //maxLength: _maxDescriptionLength,
+                  //maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                  textAlign: TextAlign.start,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: colors.primaryGreen, width: 1.5),
+                    ),
+                    fillColor: colors.card,
+                    filled: true,
+                    hintText: 'e.g. learn Ai',
+                    hintStyle: const TextStyle(color: Color(0xff444841)),
+                    counterStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Text(
                   "Describe your goal",
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 18),
