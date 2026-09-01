@@ -3,13 +3,14 @@ import 'package:path_app/models/user_model.dart';
 
 /// Firestore data layer for user documents.
 class FirestoreService {
-  final FirebaseFirestore _firestore;
+  FirebaseFirestore? _firestore;
 
-  FirestoreService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  FirestoreService({FirebaseFirestore? firestore}) : _firestore = firestore;
+
+  FirebaseFirestore get firestore => _firestore ??= FirebaseFirestore.instance;
 
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
-      _firestore.collection('users');
+      firestore.collection('users');
 
   /// Creates a new user document at `users/{uid}`.
   Future<void> createUserDocument(UserModel user) async {

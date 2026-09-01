@@ -5,16 +5,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// Keeps all Firebase-specific logic in the service layer,
 /// exposing clean async methods to the provider.
 class AuthService {
-  final FirebaseAuth _firebaseAuth;
+  FirebaseAuth? _firebaseAuth;
 
-  AuthService({FirebaseAuth? firebaseAuth})
-      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  AuthService({FirebaseAuth? firebaseAuth}) : _firebaseAuth = firebaseAuth;
+
+  FirebaseAuth get firebaseAuth => _firebaseAuth ??= FirebaseAuth.instance;
 
   /// Currently signed-in user, or `null`.
-  User? get currentUser => _firebaseAuth.currentUser;
+  User? get currentUser => firebaseAuth.currentUser;
 
   /// Stream of auth state changes (sign-in / sign-out).
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   /// Creates a new account and sets the display name.
   ///
@@ -24,7 +25,7 @@ class AuthService {
     required String password,
     required String name,
   }) async {
-    final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+    final credential = await firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -41,15 +42,49 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _firebaseAuth.signInWithEmailAndPassword(
+    final credential = await firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    if (credential.user != null && !credential.user!.emailVerified) {
+      await firebaseAuth.signOut();
+      throw FirebaseAuthException(
+        code: 'email-not-verified',
+        message: 'Please verify your email before logging in.',
+      );
+    }
+
+    return credential;
+  }
+
+  /// Sends a verification email to the current authenticated user.
+  Future<void> sendEmailVerification() async {
+    final user = firebaseAuth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'user-not-found',
+        message: 'No user is currently signed in.',
+      );
+    }
+
+    if (user.email == null || user.email!.isEmpty) {
+      throw FirebaseAuthException(
+        code: 'invalid-email',
+        message: 'The user email is missing or invalid.',
+      );
+    }
+
+    await user.sendEmailVerification();
   }
 
   /// Signs out the current user.
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    await firebaseAuth.signOut();
+  }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
   /// Maps [FirebaseAuthException] error codes to user-friendly messages.
@@ -75,6 +110,8 @@ class AuthService {
         return 'Network error. Please check your connection and try again.';
       case 'invalid-credential':
         return 'Invalid email or password. Please try again.';
+      case 'email-not-verified':
+        return 'Please verify your email address before logging in. Check your inbox for the verification link.';
       default:
         return 'Something went wrong. Please try again.';
     }

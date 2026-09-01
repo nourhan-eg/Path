@@ -11,16 +11,16 @@ import '../widgets/goal_type_selector.dart';
 import '../widgets/step_indicator.dart';
 import '../widgets/time_commitment_grid.dart';
 
-class GoalsScreen extends StatefulWidget {
-  static const String routeName = '/goals';
+class SetGoalsScreen extends StatefulWidget {
+  static const String routeName = '/goals set';
 
-  const GoalsScreen({super.key});
+  const SetGoalsScreen({super.key});
 
   @override
-  State<GoalsScreen> createState() => _GoalsScreenState();
+  State<SetGoalsScreen> createState() => _GoalsScreenState();
 }
 
-class _GoalsScreenState extends State<GoalsScreen> {
+class _GoalsScreenState extends State<SetGoalsScreen> {
   final TextEditingController _goalTitleController = TextEditingController();
   final TextEditingController _goalDescriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -105,11 +105,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     return count;
   }
 
-  int get currentStep {
-    final count = completedFieldsCount;
-    if (count == 0) return 1;
-    return (count + 1).clamp(1, 4);
-  }
+  int get currentStep => completedFieldsCount.clamp(0, 4);
 
   bool get _isFormValid => completedFieldsCount == 4;
 
@@ -165,7 +161,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(title: ""),
+      appBar: CustomAppBar(title: "PATH"),
       body: SafeArea(
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

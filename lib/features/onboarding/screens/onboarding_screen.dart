@@ -13,7 +13,8 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colors = Theme.of(context).extension<AppColorScheme>()!;
+    final colors =
+        Theme.of(context).extension<AppColorScheme>() ?? AppColorScheme.light;
 
     return Scaffold(
       body: SafeArea(
@@ -75,7 +76,7 @@ class OnboardingScreen extends StatelessWidget {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRouter.registerRoute);
+                      Navigator.pushNamed(context, AppRouter.loginRoute);
                     },
                     child: Text('onboarding.start_button'.tr()),
                   ),
