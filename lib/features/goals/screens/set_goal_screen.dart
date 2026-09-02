@@ -163,6 +163,7 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = Theme.of(context).extension<AppColorScheme>()!;
 
     return Scaffold(
@@ -198,7 +199,7 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                   "Let's define what you're working toward.",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 16,
-                    color: const Color(0xff444841),
+                    //color: const Color(0xff444841),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -225,8 +226,6 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                 TextFormField(
                   maxLines: 1,
                   controller: _goalTitleController,
-                  //maxLength: _maxDescriptionLength,
-                  //maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   textAlign: TextAlign.start,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -240,7 +239,9 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                     fillColor: colors.card,
                     filled: true,
                     hintText: 'e.g. learn Ai',
-                    hintStyle: const TextStyle(color: Color(0xff444841)),
+                    hintStyle: TextStyle( color: isDark
+                        ? const Color(0xFFA2A49E)
+                        : const Color(0xFF444841),),
                     counterStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   ),
                 ),
@@ -268,7 +269,9 @@ class _GoalsScreenState extends State<SetGoalsScreen> {
                     fillColor: colors.card,
                     filled: true,
                     hintText: 'e.g. Master a new language in 6 months',
-                    hintStyle: const TextStyle(color: Color(0xff444841)),
+                    hintStyle: TextStyle( color: isDark
+                        ? const Color(0xFFA2A49E)
+                        : const Color(0xFF444841),),
                     counterStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   ),
                 ),
