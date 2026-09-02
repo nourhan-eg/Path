@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:path_app/app.dart';
 import 'package:path_app/providers/auth_provider.dart';
+import 'package:path_app/providers/goal_provider.dart';
 import 'package:path_app/providers/theme_provider.dart';
 import 'package:path_app/providers/user_provider.dart';
 import 'package:path_app/services/firebase/auth_service.dart';
@@ -27,6 +28,7 @@ void main() async {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => GoalProvider()),
           ChangeNotifierProvider(
             create: (_) => AuthProvider(
               authService: authService,

@@ -15,8 +15,8 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider({
     required AuthService authService,
     required FirestoreService firestoreService,
-  })  : _authService = authService,
-        _firestoreService = firestoreService;
+  }) : _authService = authService,
+       _firestoreService = firestoreService;
 
   AuthStatus _status = AuthStatus.idle;
   String? _errorMessage;
@@ -33,7 +33,8 @@ class AuthProvider extends ChangeNotifier {
   /// Stream of auth state changes for reactive listeners.
   Stream<User?> get authStateChanges => _authService.authStateChanges;
 
-  /// Registers a new user, sets display name, and creates a Firestore profile.
+  /// Registers a new user, sets display name, creates a Firestore profile,
+  /// and sends an email verification link before allowing access.
   Future<bool> register({
     required String email,
     required String password,
@@ -50,8 +51,10 @@ class AuthProvider extends ChangeNotifier {
         name: name,
       );
 
-      // Create a Firestore user document.
       if (credential.user != null) {
+        await _authService.sendEmailVerification();
+        await _authService.signOut();
+
         final userModel = UserModel(
           uid: credential.user!.uid,
           email: email,
@@ -63,6 +66,8 @@ class AuthProvider extends ChangeNotifier {
       }
 
       _status = AuthStatus.success;
+      _errorMessage =
+          'Verification email sent. Please verify your email before log in.';
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
@@ -79,10 +84,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   /// Signs in an existing user.
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<bool> login({required String email, required String password}) async {
     _status = AuthStatus.loading;
     _errorMessage = null;
     notifyListeners();
@@ -111,6 +113,22 @@ class AuthProvider extends ChangeNotifier {
     _status = AuthStatus.idle;
     _errorMessage = null;
     notifyListeners();
+  }
+
+  /// Sends a password reset email via [AuthService].
+  Future<bool> resetPassword({required String email}) async {
+    try {
+      await _authService.sendPasswordResetEmail(email: email);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = AuthService.mapFirebaseAuthError(e);
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
+      return false;
+    }
   }
 
   /// Clears the current error, useful when the user dismisses an error dialog.
