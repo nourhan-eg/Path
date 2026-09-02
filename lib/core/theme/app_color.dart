@@ -126,7 +126,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     primaryGreen: Color(0xFF8FA28A),
     sageLight: Color(0xFF3A3C35),
     gold: Color(0xFFC8A96B),
-    textPrimary: Color(0xFFF2F0E8),
+    textPrimary: Color(0xFFE3E3DE),
     textSecondary: Color(0xFFC4C8BF),
     textTertiary: Color(0xFFE3E3DE),
     appBarTitle: Color(0xFFB8CCB2),

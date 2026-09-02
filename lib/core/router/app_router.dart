@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:path_app/features/auth/screens/login_screen.dart';
 import 'package:path_app/features/auth/screens/register_screen.dart';
+import 'package:path_app/features/dashboard/screens/dashboard_no_goals.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
 import 'package:path_app/features/goals/screens/build_with_ai_screen.dart';
 import 'package:path_app/features/goals/screens/set_goal_screen.dart';
 import 'package:path_app/features/main/main_screen.dart';
 import 'package:path_app/features/onboarding/screens/onboarding_screen.dart';
+
+import '../../features/session/session_screen.dart';
 
 class AppRouter {
   static const String mainRoute = '/main';
@@ -18,15 +21,16 @@ class AppRouter {
   static const String registerRoute = '/register';
   static const String loginRoute = '/login';
   static const String dashboardNoGoalRoute = '/dashboard_no';
+  static const String sessionRoute = '/session';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case mainRoute:
         return MaterialPageRoute(builder: (_) => const MainScreen());
       case dashboardNoGoalRoute:
-        return MaterialPageRoute(
-          builder: (_) => const MainScreen(initialIndex: 0),
-        );
+        return MaterialPageRoute(builder: (_) => const DashboardNoGoals());
+      case dashboardWishGoalRoute:
+        return MaterialPageRoute(builder: (_) => const DashboardWithGoals());
       case goalsSetRoute:
         return MaterialPageRoute(builder: (_) => const SetGoalsScreen());
       case signatureJourneyRoute:
@@ -35,14 +39,14 @@ class AppRouter {
         );
       case onboardingRoute:
         return MaterialPageRoute(builder: (_) => OnboardingScreen());
-      case dashboardWishGoalRoute:
-        return MaterialPageRoute(builder: (_) => DashboardScreen());
       case registerRoute:
         return MaterialPageRoute(builder: (_) => RegisterScreen());
       case loginRoute:
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case goalsWithAiRoute:
         return MaterialPageRoute(builder: (_) => BuildWithAiScreen());
+      case sessionRoute:
+        return MaterialPageRoute(builder: (_) => SessionScreen());
       default:
         return MaterialPageRoute(builder: (_) => const MainScreen());
     }

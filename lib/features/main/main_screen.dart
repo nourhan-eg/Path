@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:path_app/core/widgets/custom_bottom_nav_bar.dart';
-import 'package:path_app/features/dashboard/screens/dashboard_no_goals.dart';
-import 'package:path_app/features/goals/screens/set_goal_screen.dart';
+import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
+import 'package:path_app/features/goals/screens/goals_screen.dart';
 import 'package:path_app/features/profile/screens/profile_screen.dart';
 import 'package:path_app/features/resources/screens/resources_screen.dart';
 import 'package:path_app/features/signature_journey/screens/signature_journey.dart';
-
-import '../goals/screens/goals_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const String routeName = '/main';
@@ -25,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   late int _currentIndex;
 
   final List<Widget> _tabs = const [
-    DashboardNoGoals(),
+    DashboardWithGoals(),
     GoalsScreen(),
     SignatureJourney(),
     ResourcesScreen(),
