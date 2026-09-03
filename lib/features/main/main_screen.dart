@@ -10,10 +10,7 @@ class MainScreen extends StatefulWidget {
   static const String routeName = '/main';
   final int initialIndex;
 
-  const MainScreen({
-    super.key,
-    this.initialIndex = 0,
-  });
+  const MainScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -38,18 +35,18 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _tabs,
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        body: IndexedStack(index: _currentIndex, children: _tabs),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

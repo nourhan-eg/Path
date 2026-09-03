@@ -41,6 +41,14 @@ class FirestoreService {
     await _tasksCollection.doc(task.taskId).set(task.toMap());
   }
 
+  Future<void> updateTaskCompletion(String taskId, bool isCompleted) async {
+    await _tasksCollection.doc(taskId).update({'isCompleted': isCompleted});
+  }
+
+  Future<void> updateGoalProgress(String goalId, double progress) async {
+    await _goalsCollection.doc(goalId).update({'overallProgress': progress});
+  }
+
   Future<void> saveGeneratedPath({
     required GoalModel goal,
     required List<MilestoneModel> milestones,
@@ -94,28 +102,29 @@ class FirestoreService {
   Future<List<GoalModel>> getGoalsForUser(String userId) async {
     final snapshot = await _goalsCollection
         .where('userId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .get();
 
-    return snapshot.docs.map((doc) => GoalModel.fromMap(doc.data())).toList();
+    final goals = snapshot.docs
+      .map((doc) => GoalModel.fromMap(doc.data()))
+      .toList();
+    goals.sort((first, second) => second.createdAt.compareTo(first.createdAt));
+    return goals;
   }
 
   Future<List<MilestoneModel>> getMilestonesForGoal(String goalId) async {
-    final snapshot = await _milestonesCollection
-        .where('goalId', isEqualTo: goalId)
-        .orderBy('order')
-        .get();
+    final snapshot =
+      await _milestonesCollection.where('goalId', isEqualTo: goalId).get();
 
-    return snapshot.docs
+    final milestones = snapshot.docs
         .map((doc) => MilestoneModel.fromMap(doc.data()))
         .toList();
+    milestones.sort((first, second) => first.order.compareTo(second.order));
+    return milestones;
   }
 
   Future<List<TaskModel>> getTasksForMilestone(String milestoneId) async {
-    final snapshot = await _tasksCollection
-        .where('milestoneId', isEqualTo: milestoneId)
-        .orderBy('dueContext')
-        .get();
+    final snapshot =
+      await _tasksCollection.where('milestoneId', isEqualTo: milestoneId).get();
 
     return snapshot.docs.map((doc) => TaskModel.fromMap(doc.data())).toList();
   }

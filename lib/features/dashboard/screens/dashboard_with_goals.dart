@@ -36,11 +36,7 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = context.read<AuthProvider>().currentUser;
       if (user != null) {
-        final provider = context.read<GoalProvider>();
-        await provider.loadGoals(user.uid);
-        if (provider.goals.isNotEmpty) {
-          await provider.loadGoalDetails(provider.goals.first.goalId);
-        }
+        await context.read<GoalProvider>().loadUserGoals(user.uid);
       }
     });
   }
@@ -58,12 +54,18 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
         }
 
         if (goalProvider.goals.isEmpty) {
+          if (goalProvider.loadError != null) {
+            return Scaffold(
+              body: Center(child: Text(goalProvider.loadError!)),
+            );
+          }
           return const DashboardNoGoals();
         }
 
         final goal = goalProvider.goals.first;
         final userName = context.watch<UserProvider>().displayName;
         final tasks = goalProvider.tasks;
+        final todayTasks = tasks.take(3).toList();
         final completedTasks = tasks.where((task) => task.isCompleted).length;
 
         return Scaffold(
@@ -156,12 +158,18 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
               const SizedBox(height: 14),
 
               // 5. Today's Actions List
-              ...List.generate(tasks.length, (index) {
-                final task = tasks[index];
+              ...todayTasks.map((task) {
                 return TodayActionItem(
                   title: task.title,
                   isCompleted: task.isCompleted,
-                  onToggle: (_) {},
+                  onToggle: (isCompleted) {
+                    if (isCompleted != null) {
+                      goalProvider.updateTaskCompletion(
+                        task.taskId,
+                        isCompleted,
+                      );
+                    }
+                  },
                   onStartPressed: () => _startTask(task.title),
                 );
               }),

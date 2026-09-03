@@ -122,6 +122,43 @@ class GoalProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> loadUserGoals(String userId) async {
+    _isLoading = true;
+    _loadError = null;
+    notifyListeners();
+
+    try {
+      _goals = await _firestoreService.getGoalsForUser(userId);
+      _milestones = [];
+      _tasks = [];
+
+      if (_goals.isNotEmpty) {
+        final firstGoal = _goals.first;
+        _goal = firstGoal;
+        _milestones = await _firestoreService.getMilestonesForGoal(
+          firstGoal.goalId,
+        );
+
+        final taskLists = await Future.wait(
+          _milestones.map(
+            (milestone) => _firestoreService.getTasksForMilestone(
+              milestone.milestoneId,
+            ),
+          ),
+        );
+        _tasks = taskLists.expand((tasks) => tasks).toList();
+      }
+    } catch (error) {
+      _loadError = error.toString();
+      _goals = [];
+      _milestones = [];
+      _tasks = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> loadGoalDetails(String goalId) async {
     _isLoading = true;
     _loadError = null;
@@ -151,6 +188,43 @@ class GoalProvider extends ChangeNotifier {
       _loadError = error.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateTaskCompletion(String taskId, bool isCompleted) async {
+    final taskIndex = _tasks.indexWhere((task) => task.taskId == taskId);
+    if (taskIndex == -1) return;
+
+    final previousTask = _tasks[taskIndex];
+    _tasks[taskIndex] = previousTask.copyWith(isCompleted: isCompleted);
+    notifyListeners();
+
+    try {
+      await _firestoreService.updateTaskCompletion(taskId, isCompleted);
+
+      final totalTasks = _tasks.length;
+      final completedTasks =
+          _tasks.where((task) => task.isCompleted).length;
+      final progress = totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
+      final currentGoal = _goal;
+      if (currentGoal != null) {
+        final updatedGoal = currentGoal.copyWith(overallProgress: progress);
+        _goal = updatedGoal;
+        _goals = _goals
+            .map(
+              (goal) => goal.goalId == updatedGoal.goalId ? updatedGoal : goal,
+            )
+            .toList();
+        await _firestoreService.updateGoalProgress(
+          currentGoal.goalId,
+          progress,
+        );
+        notifyListeners();
+      }
+    } catch (error) {
+      _tasks[taskIndex] = previousTask;
+      _loadError = error.toString();
       notifyListeners();
     }
   }

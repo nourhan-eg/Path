@@ -17,9 +17,9 @@ class GoalProgressBody extends StatelessWidget {
   const GoalProgressBody({
     super.key,
     this.progressPercentage = 0.65,
-    this.investedText = '24h',
-    this.tasksText = '18/28',
-    this.evidenceText = '12',
+    this.investedText = '0h',
+    this.tasksText = '0/0',
+    this.evidenceText = '0',
     this.milestones,
     this.onViewJourneyPressed,
   });
