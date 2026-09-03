@@ -36,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+      bottom: true,
       child: Scaffold(
         body: IndexedStack(index: _currentIndex, children: _tabs),
         bottomNavigationBar: CustomBottomNavBar(
