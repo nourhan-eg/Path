@@ -31,7 +31,7 @@ class _AppBootstrapScreenState extends State<AppBootstrapScreen> {
 
     final user = FirebaseAuth.instance.currentUser;
     final route = user != null && user.emailVerified
-        ? AppRouter.dashboardNoGoalRoute
+        ? AppRouter.mainRoute
         : AppRouter.loginRoute;
 
     if (!mounted) return;
