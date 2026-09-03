@@ -28,7 +28,9 @@ void main() async {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
-          ChangeNotifierProvider(create: (_) => GoalProvider()),
+          ChangeNotifierProvider(
+            create: (_) => GoalProvider(firestoreService: firestoreService),
+          ),
           ChangeNotifierProvider(
             create: (_) => AuthProvider(
               authService: authService,

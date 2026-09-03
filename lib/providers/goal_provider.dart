@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_app/models/api/api_milestone.dart';
+import 'package:path_app/models/api/api_task.dart';
 import 'package:path_app/models/api/path_generation_request.dart';
 import 'package:path_app/models/api/path_generation_response.dart';
 import 'package:path_app/models/goal_model.dart';
+import 'package:path_app/models/milestone_model.dart';
+import 'package:path_app/models/task_model.dart';
 import 'package:path_app/services/ai/path_generation_service.dart';
+import 'package:path_app/services/firebase/firestore_service.dart';
 
 /// Holds draft data for the goal setup flow across steps.
 class GoalProvider extends ChangeNotifier {
   final PathGenerationService _pathGenerationService = PathGenerationService();
+  final FirestoreService _firestoreService;
+
+  GoalProvider({required FirestoreService firestoreService})
+      : _firestoreService = firestoreService;
+
   PathGenerationResponse? _generatedPath;
   String? _generationError;
   bool _isGenerating = false;
+  bool _isLoading = false;
+  String? _loadError;
+  List<GoalModel> _goals = [];
+  List<MilestoneModel> _milestones = [];
+  List<TaskModel> _tasks = [];
 
   PathGenerationResponse? get generatedPath => _generatedPath;
   bool get isGenerating => _isGenerating;
   String? get generationError => _generationError;
+  bool get isLoading => _isLoading;
+  String? get loadError => _loadError;
+  List<GoalModel> get goals => List.unmodifiable(_goals);
+  List<MilestoneModel> get milestones => List.unmodifiable(_milestones);
+  List<TaskModel> get tasks => List.unmodifiable(_tasks);
 
   double _hoursFromLabel(String? label) {
     switch (label) {
@@ -85,6 +106,129 @@ class GoalProvider extends ChangeNotifier {
 
   void resetDraft() => reset();
 
+  Future<void> loadGoals(String userId) async {
+    _isLoading = true;
+    _loadError = null;
+    notifyListeners();
+
+    try {
+      _goals = await _firestoreService.getGoalsForUser(userId);
+    } catch (error) {
+      _loadError = error.toString();
+      _goals = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadUserGoals(String userId) async {
+    _isLoading = true;
+    _loadError = null;
+    notifyListeners();
+
+    try {
+      _goals = await _firestoreService.getGoalsForUser(userId);
+      _milestones = [];
+      _tasks = [];
+
+      if (_goals.isNotEmpty) {
+        final firstGoal = _goals.first;
+        _goal = firstGoal;
+        _milestones = await _firestoreService.getMilestonesForGoal(
+          firstGoal.goalId,
+        );
+
+        final taskLists = await Future.wait(
+          _milestones.map(
+            (milestone) => _firestoreService.getTasksForMilestone(
+              milestone.milestoneId,
+            ),
+          ),
+        );
+        _tasks = taskLists.expand((tasks) => tasks).toList();
+      }
+    } catch (error) {
+      _loadError = error.toString();
+      _goals = [];
+      _milestones = [];
+      _tasks = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadGoalDetails(String goalId) async {
+    _isLoading = true;
+    _loadError = null;
+    notifyListeners();
+
+    try {
+      final goal = await _firestoreService.getGoalDocument(goalId);
+      _milestones = await _firestoreService.getMilestonesForGoal(goalId);
+
+      final taskLists = await Future.wait(
+        _milestones.map(
+          (milestone) => _firestoreService.getTasksForMilestone(
+            milestone.milestoneId,
+          ),
+        ),
+      );
+      _tasks = taskLists.expand((tasks) => tasks).toList();
+
+      if (goal != null) {
+        _goal = goal;
+        _goals = [
+          ..._goals.where((existing) => existing.goalId != goal.goalId),
+          goal,
+        ];
+      }
+    } catch (error) {
+      _loadError = error.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateTaskCompletion(String taskId, bool isCompleted) async {
+    final taskIndex = _tasks.indexWhere((task) => task.taskId == taskId);
+    if (taskIndex == -1) return;
+
+    final previousTask = _tasks[taskIndex];
+    _tasks[taskIndex] = previousTask.copyWith(isCompleted: isCompleted);
+    notifyListeners();
+
+    try {
+      await _firestoreService.updateTaskCompletion(taskId, isCompleted);
+
+      final totalTasks = _tasks.length;
+      final completedTasks =
+          _tasks.where((task) => task.isCompleted).length;
+      final progress = totalTasks == 0 ? 0.0 : completedTasks / totalTasks;
+      final currentGoal = _goal;
+      if (currentGoal != null) {
+        final updatedGoal = currentGoal.copyWith(overallProgress: progress);
+        _goal = updatedGoal;
+        _goals = _goals
+            .map(
+              (goal) => goal.goalId == updatedGoal.goalId ? updatedGoal : goal,
+            )
+            .toList();
+        await _firestoreService.updateGoalProgress(
+          currentGoal.goalId,
+          progress,
+        );
+        notifyListeners();
+      }
+    } catch (error) {
+      _tasks[taskIndex] = previousTask;
+      _loadError = error.toString();
+      notifyListeners();
+    }
+  }
+
   Future<bool> generatePath() async {
     if (_goal == null) {
       _generationError = 'Goal data is incomplete.';
@@ -106,6 +250,27 @@ class GoalProvider extends ChangeNotifier {
       );
 
       _generatedPath = await _pathGenerationService.generatePath(request);
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw StateError('You must be logged in to save a goal.');
+      }
+
+      final goal = _toGoalModel(_generatedPath!, user.uid);
+      final milestones = _generatedPath!.milestones
+          .map((milestone) => _toMilestoneModel(milestone, goal.goalId))
+          .toList();
+      final tasks = [
+        for (final milestone in _generatedPath!.milestones)
+          for (final task in milestone.tasks) _toTaskModel(task, milestone.id),
+      ];
+
+      await _firestoreService.saveGeneratedPath(
+        goal: goal,
+        milestones: milestones,
+        tasks: tasks,
+      );
+      _goal = goal;
+      _goals = [goal, ..._goals.where((item) => item.goalId != goal.goalId)];
       _isGenerating = false;
       notifyListeners();
       return true;
@@ -115,5 +280,43 @@ class GoalProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  GoalModel _toGoalModel(PathGenerationResponse response, String userId) {
+    return GoalModel(
+      goalId: response.id,
+      userId: userId,
+      title: response.goalTitle,
+      createdAt: DateTime.now(),
+      deadline: DateTime.tryParse(response.deadline) ?? DateTime.now(),
+      category: response.goalCategory,
+      description: response.summary,
+      overallProgress: 0.0,
+      timeCommitment: _goal?.timeCommitment ?? '',
+    );
+  }
+
+  MilestoneModel _toMilestoneModel(ApiMilestone milestone, String goalId) {
+    return MilestoneModel(
+      milestoneId: milestone.id,
+      goalId: goalId,
+      title: milestone.title,
+      description: milestone.description,
+      order: milestone.order,
+      createdAt: DateTime.tryParse(milestone.targetDate) ?? DateTime.now(),
+      progress: 0.0,
+      status: MilestoneStatus.locked,
+    );
+  }
+
+  TaskModel _toTaskModel(ApiTask task, String milestoneId) {
+    return TaskModel(
+      taskId: task.id,
+      milestoneId: milestoneId,
+      title: task.title,
+      isCompleted: task.status.toLowerCase() == 'completed',
+      timeSpent: 0,
+      dueContext: task.description,
+    );
   }
 }

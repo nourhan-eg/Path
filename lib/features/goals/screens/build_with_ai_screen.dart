@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../providers/goal_provider.dart';
 import '../widgets/build_pulsing_icon.dart';
@@ -53,6 +54,13 @@ class _BuildWithAiScreenState extends State<BuildWithAiScreen> {
 
       setState(() => _currentStep = BuildStep.done);
       await Future.delayed(const Duration(milliseconds: 1400));
+      if (!mounted) return;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRouter.mainRoute,
+        (route) => false,
+      );
     } else {
       _showError(context.read<GoalProvider>().generationError);
     }
