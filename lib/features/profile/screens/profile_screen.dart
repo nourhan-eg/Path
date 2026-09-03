@@ -9,6 +9,7 @@ import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/goal_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../../../providers/user_provider.dart';
 import '../widgets/profile_header.dart';
@@ -209,14 +210,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 onSignOutTap: () async {
                   await authProvider.logout();
-                  if (!mounted) return;
-
-                  context.read<UserProvider>().clearUser();
-
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    AppRouter.loginRoute,
-                    (route) => false,
-                  );
+                  if (context.mounted) {
+                    context.read<UserProvider>().clearUser();
+                    context.read<GoalProvider>().resetDraft();
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRouter.loginRoute,
+                      (route) => false,
+                    );
+                  }
                 },
                 languageText: context.locale.languageCode == 'ar'
                     ? 'العربية'

@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_color.dart';
 
 /// Renders the horizontal wrap list of goal category chips.
-class GoalTypeSelector extends StatelessWidget {
+class GoalCategorySelector extends StatelessWidget {
   final String? selectedType;
   final ValueChanged<String> onTypeSelected;
   final List<String> goalTypes;
 
-  const GoalTypeSelector({
+  const GoalCategorySelector({
     super.key,
     required this.selectedType,
     required this.onTypeSelected,
     this.goalTypes = const [
-      'Career Growth',
-      'Academic Goal',
-      'Personal Goal',
-      'Fitness',
+      'Career',
+      'Education',
+      'Personal',
+      'Health',
       'Financial',
+      'other'
     ],
   });
 

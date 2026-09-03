@@ -7,6 +7,7 @@ class GoalModel {
   final DateTime createdAt;
   final DateTime deadline;
   final String category;
+  final String description;
   final double overallProgress;
   final String timeCommitment;
 
@@ -17,6 +18,7 @@ class GoalModel {
     required this.createdAt,
     required this.deadline,
     required this.category,
+    required this.description,
     required this.overallProgress,
     required this.timeCommitment,
   });
@@ -29,6 +31,7 @@ class GoalModel {
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       deadline: (map['deadline'] as Timestamp).toDate(),
       category: map['category'] as String,
+      description: map['description'] as String,
       overallProgress: (map['overallProgress'] as num).toDouble(),
       timeCommitment: map['timeCommitment'] as String,
     );
@@ -42,21 +45,33 @@ class GoalModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'deadline': Timestamp.fromDate(deadline),
       'category': category,
+      'description': description,
       'overallProgress': overallProgress,
       'timeCommitment': timeCommitment,
     };
   }
 
-  GoalModel copyWith({double? overallProgress}) {
+  GoalModel copyWith({
+    String? goalId,
+    String? userId,
+    String? title,
+    DateTime? createdAt,
+    DateTime? deadline,
+    String? category,
+    String? description,
+    double? overallProgress,
+    String? timeCommitment,
+  }) {
     return GoalModel(
-      goalId: goalId,
-      userId: userId,
-      title: title,
-      createdAt: createdAt,
-      deadline: deadline,
-      category: category,
+      goalId: goalId ?? this.goalId,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      createdAt: createdAt ?? this.createdAt,
+      deadline: deadline ?? this.deadline,
+      category: category ?? this.category,
+      description: description ?? this.description,
       overallProgress: overallProgress ?? this.overallProgress,
-      timeCommitment: timeCommitment,
+      timeCommitment: timeCommitment ?? this.timeCommitment,
     );
   }
 }
