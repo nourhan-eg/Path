@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen>
 
       await _persistRememberMeState();
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRouter.dashboardNoGoalRoute);
+      Navigator.pushReplacementNamed(context, AppRouter.mainRoute);
     } else if (authProvider.errorMessage != null) {
       _showErrorSnackBar(authProvider.errorMessage!);
     }
