@@ -4,6 +4,7 @@ import 'package:path_app/features/auth/screens/register_screen.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_no_goals.dart';
 import 'package:path_app/features/dashboard/screens/dashboard_with_goals.dart';
 import 'package:path_app/features/goals/screens/build_with_ai_screen.dart';
+import 'package:path_app/features/goals/screens/goal_details_screen.dart';
 import 'package:path_app/features/goals/screens/set_goal_screen.dart';
 import 'package:path_app/features/main/main_screen.dart';
 import 'package:path_app/features/onboarding/screens/onboarding_screen.dart';
@@ -18,6 +19,7 @@ class AppRouter {
   static const String goalsSetRoute = '/goals set';
   static const String goalsRoute = '/goals';
   static const String goalsWithAiRoute = '/goals ai';
+  static const String goalDetailsRoute = '/goal_details';
   static const String registerRoute = '/register';
   static const String loginRoute = '/login';
   static const String dashboardNoGoalRoute = '/dashboard_no';
@@ -45,6 +47,11 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case goalsWithAiRoute:
         return MaterialPageRoute(builder: (_) => BuildWithAiScreen());
+      case goalDetailsRoute:
+        return MaterialPageRoute(
+          builder: (_) => const GoalDetailsScreen(),
+          settings: settings,
+        );
       case sessionRoute:
         return MaterialPageRoute(builder: (_) => SessionScreen());
       default:

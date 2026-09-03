@@ -1,10 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:path_app/core/router/app_router.dart';
-import 'package:path_app/core/theme/app_color.dart';
+import 'package:path_app/features/dashboard/screens/dashboard_no_goals.dart';
 import 'package:path_app/features/dashboard/widgets/focus_area_card.dart';
 import 'package:path_app/features/dashboard/widgets/greeting_card.dart';
 import 'package:path_app/features/dashboard/widgets/today_action_item.dart';
+import 'package:path_app/providers/auth_provider.dart';
+import 'package:path_app/providers/goal_provider.dart';
+import 'package:path_app/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class DashboardWithGoals extends StatefulWidget {
   static const String routeName = '/dashboard_with_goals';
@@ -16,29 +20,6 @@ class DashboardWithGoals extends StatefulWidget {
 }
 
 class _DashboardWithGoalsState extends State<DashboardWithGoals> {
-  // Interactive dummy state for today's actions
-  final List<Map<String, dynamic>> _todayActions = [
-    {
-      'title': '15 min Guided Meditation',
-      'isCompleted': true,
-    },
-    {
-      'title': 'Write 3 pages in journal',
-      'isCompleted': false,
-    },
-    {
-      'title': 'Read 10 pages of current book',
-      'isCompleted': false,
-    },
-  ];
-
-  void _toggleTask(int index) {
-    setState(() {
-      _todayActions[index]['isCompleted'] =
-          !_todayActions[index]['isCompleted'];
-    });
-  }
-
   void _startTask(String title) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -50,10 +31,42 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final user = context.read<AuthProvider>().currentUser;
+      if (user != null) {
+        final provider = context.read<GoalProvider>();
+        await provider.loadGoals(user.uid);
+        if (provider.goals.isNotEmpty) {
+          await provider.loadGoalDetails(provider.goals.first.goalId);
+        }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    return Consumer<GoalProvider>(
+      builder: (context, goalProvider, child) {
+        if (goalProvider.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (goalProvider.goals.isEmpty) {
+          return const DashboardNoGoals();
+        }
+
+        final goal = goalProvider.goals.first;
+        final userName = context.watch<UserProvider>().displayName;
+        final tasks = goalProvider.tasks;
+        final completedTasks = tasks.where((task) => task.isCompleted).length;
+
+        return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -63,10 +76,10 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Top Greeting Card with 75% Progress Ring
-              const GreetingCard(
-                userName: 'Alex',
+              GreetingCard(
+                userName: userName,
                 message: "You're making steady progress on your journey.",
-                progressPercent: 0.75,
+                progressPercent: goal.overallProgress,
               ),
 
               const SizedBox(height: 24),
@@ -104,16 +117,20 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
               const SizedBox(height: 12),
 
               // 3. Focus Area Card
-              FocusAreaCard(
-                weekText: 'Week 3 of 8',
-                title: 'Morning Routine Mastery',
-                description:
-                    'Establishing a consistent 30-minute meditation and journaling practice before screen time.',
-                timeInvested: '12.5 hrs',
-                tasksDone: '18 / 24',
-                onOptionsPressed: () {
-                  // Options menu action
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRouter.goalDetailsRoute,
+                    arguments: goal.goalId,
+                  );
                 },
+                child: FocusAreaCard(
+                  title: goal.title,
+                  description: goal.description,
+                  timeInvested: '0 hrs',
+                  tasksDone: '$completedTasks / ${tasks.length}',
+                ),
               ),
 
               const SizedBox(height: 28),
@@ -139,13 +156,13 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
               const SizedBox(height: 14),
 
               // 5. Today's Actions List
-              ...List.generate(_todayActions.length, (index) {
-                final action = _todayActions[index];
+              ...List.generate(tasks.length, (index) {
+                final task = tasks[index];
                 return TodayActionItem(
-                  title: action['title'] as String,
-                  isCompleted: action['isCompleted'] as bool,
-                  onToggle: (_) => _toggleTask(index),
-                  onStartPressed: () => _startTask(action['title'] as String),
+                  title: task.title,
+                  isCompleted: task.isCompleted,
+                  onToggle: (_) {},
+                  onStartPressed: () => _startTask(task.title),
                 );
               }),
 
@@ -176,6 +193,8 @@ class _DashboardWithGoalsState extends State<DashboardWithGoals> {
           ),
         ),
       ),
+        );
+      },
     );
   }
 }
